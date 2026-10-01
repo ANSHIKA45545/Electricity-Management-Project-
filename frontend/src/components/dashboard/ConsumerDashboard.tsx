@@ -180,13 +180,14 @@ const [bidFormData, setBidFormData] = useState({
   scheduleType: 'RTC',
   message: '',
   validityDays: 30,
-  renewableType: ''
+  renewableType: '',
+  deliveryState: '',
 });
 
 
-const [showViewOffersModal, setShowViewOffersModal] = useState(false);
-const [selectedBidForView, setSelectedBidForView] = useState<any>(null);
-const [bidOffers, setBidOffers] = useState<any[]>([]);
+// const [showViewOffersModal, setShowViewOffersModal] = useState(false);
+// const [selectedBidForView, setSelectedBidForView] = useState<any>(null);
+// const [bidOffers, setBidOffers] = useState<any[]>([]);
 
 // Bid Offers View State
 const [showBidOffersView, setShowBidOffersView] = useState(false);
@@ -489,7 +490,7 @@ const [isSubmittingOA, setIsSubmittingOA] = useState(false);
           message: bidMessage,
           consumerName: profile?.name || 'Consumer',
           consumerId: user?.id,
-          plantId: selectedPlantId,  
+          plantId: selectedSupplierPlants?.[0]?.id ?? null,  
           status: 'PENDING'
         })
       });

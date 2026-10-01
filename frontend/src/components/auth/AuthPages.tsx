@@ -365,7 +365,7 @@ export const AuthPages: React.FC<AuthPagesProps> = ({
           id: data.user.id,
           email: data.user.email,
           name: data.user.name,
-          role: 'CONSUMER',
+          role: 'CONSUMER' as const,
           phoneNumber: data.user.phoneNumber,
           k_number: data.user.k_number,
           connection_type: data.user.connection_type,
