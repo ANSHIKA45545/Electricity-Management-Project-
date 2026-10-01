@@ -16,7 +16,7 @@ import { AdminAuthPage } from './components/auth/AdminAuthPages';
 import { SupplierDetailPage } from './components/consumers/SuppliersDetailPage'; 
 
 const AppContent: React.FC = () => {
-  const { user, token, loading, logout } = useAuth();
+  const { user, token, loading } = useAuth();
 
   // Add 'SUPPLIER_DETAIL' to the viewState type
   const [viewState, setViewState] = useState<'LANDING' | 'REGULATIONS' | 'CALCULATOR' | 'AUTH' | 'ADMIN_AUTH' | 'DASHBOARD' | 'SUPPLIER_DETAIL'>('LANDING');
