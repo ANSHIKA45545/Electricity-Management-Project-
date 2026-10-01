@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useLanguage } from '../../context/LanguageContext';
-import { LogOut, Menu, X, Globe } from 'lucide-react';
+// import { useLanguage } from '../../context/LanguageContext';
+import { LogOut, X } from 'lucide-react';
 
 export const DashboardLayout: React.FC<{ 
   children: React.ReactNode; 
@@ -9,7 +9,7 @@ export const DashboardLayout: React.FC<{
   setTab: (tab: string) => void; 
 }> = ({ children, currentTab, setTab }) => {
   const { user, logout } = useAuth();
-  const { language, setLanguage } = useLanguage(); // This will trigger page reload on change
+  // const { language, setLanguage } = useLanguage(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleHomeClick = () => {
@@ -52,10 +52,10 @@ export const DashboardLayout: React.FC<{
   const activeMenu = menuItems[activeRole as 'CONSUMER' | 'SUPPLIER' | 'ADMIN'] || menuItems.CONSUMER;
 
   // Handle language change
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = e.target.value as 'English' | 'Hindi';
-    setLanguage(newLanguage); // This will trigger translation and page reload
-  };
+  // const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const newLanguage = e.target.value as 'English' | 'Hindi';
+  //   setLanguage(newLanguage); 
+  // };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-white border-r border-[#e0e8e4]">
