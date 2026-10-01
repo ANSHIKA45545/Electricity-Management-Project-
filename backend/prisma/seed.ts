@@ -24,7 +24,7 @@ async function main() {
     }
   });
   
-  console.log("✅ Admin user created:", admin.email);
+  console.log("Admin user created:", admin.email);
   console.log("   Email: admin@goar.gov.in");
   console.log("   Password: admin123");
   
