@@ -4,12 +4,11 @@ import { db } from '../config/db';
 
 const router = Router();
 
-// Create a new bid request
+
 router.post('/', authenticateToken, async (req: any, res: any) => {
   try {
     const { mw, price, duration, message, consumerName, consumerId, scheduleType,renewableType, drawalPoint, validityDays } = req.body;
     
-    // Validate required fields
     if (!mw || !price || !duration) {
       return res.status(400).json({ error: 'mw, price, and duration are required' });
     }
