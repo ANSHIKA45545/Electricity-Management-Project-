@@ -3,28 +3,28 @@ import { useAuth } from '../../context/AuthContext';
 import {
   Zap, ShieldAlert, Award, Clock,
   Search, ArrowRight, Upload, DollarSign, BarChart2, Settings,
-  FileText, CheckCircle, ChevronRight, ClipboardList, AlertCircle, X, Eye, Save, Download,Gavel, Plus,RefreshCw,
+  FileText, CheckCircle, ChevronRight, ClipboardList, AlertCircle, X, Eye, Save,Gavel, Plus,RefreshCw,
   Building, Phone, MapPin, ArrowLeft
 } from 'lucide-react';
 
-import { SupplierDetailContent } from '../consumers/SupplierDetailContent';
+// import { SupplierDetailContent } from '../consumers/SupplierDetailContent';
 
-interface DraftApplication {
-  id: string;
-  supplierId: string;
-  supplierName: string;
-  mw: number;
-  duration: number;
-  startDate: string;
-  price: number;
-  timeBlocks: string;
-  deliveryState: string;
-  notes: string;
-  contactMobile: string;
-  legalIdentifier: string;
-  discomConsumerNo: string;
-  savedAt: string;
-}
+// interface DraftApplication {
+//   id: string;
+//   supplierId: string;
+//   supplierName: string;
+//   mw: number;
+//   duration: number;
+//   startDate: string;
+//   price: number;
+//   timeBlocks: string;
+//   deliveryState: string;
+//   notes: string;
+//   contactMobile: string;
+//   legalIdentifier: string;
+//   discomConsumerNo: string;
+//   savedAt: string;
+// }
 
 interface ConsumerDashboardProps {
   activeTab: string;
@@ -72,29 +72,29 @@ export const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ activeTab,
   const [applications, setApplications] = useState<any[]>([]);
   const [schedules] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
-  const [drafts, setDrafts] = useState<DraftApplication[]>([]);
+  // const [drafts, setDrafts] = useState<DraftApplication[]>([]);
 
   // Consumer workflow state
   const [consumerName, setConsumerName] = useState('');
   const [selectedSupplierId, setSelectedSupplierId] = useState<string | null>(null);
-  const [supplierDetails, setSupplierDetails] = useState<any | null>(null);
+  // const [supplierDetails, setSupplierDetails] = useState<any | null>(null);
   const [requestMw, setRequestMw] = useState(10);
   const [requestDuration, setRequestDuration] = useState(365);
   const [requestStartDate, setRequestStartDate] = useState('2026-06-01');
   const [requestScheduleType, setRequestScheduleType] = useState('RTC');
-  const [requestTimeBlocks, setRequestTimeBlocks] = useState('10:00-18:00');
+  // const [requestTimeBlocks, setRequestTimeBlocks] = useState('10:00-18:00');
   const [requestDeliveryState, setRequestDeliveryState] = useState('Rajasthan');
-  const [requestNotes, setRequestNotes] = useState('');
-  const [openContractWarning, setOpenContractWarning] = useState('');
+  // const [requestNotes, setRequestNotes] = useState('');
+  // const [openContractWarning, setOpenContractWarning] = useState('');
   const [isRequestFormOpen, setIsRequestFormOpen] = useState(false);
   const [requestedPrice, setRequestedPrice] = useState(4.5);
   const [selectedApplication, setSelectedApplication] = useState<any>(null);
   const [contactMobile, setContactMobile] = useState('');
   const [legalIdentifier, setLegalIdentifier] = useState('');
   const [discomConsumerNo, setDiscomConsumerNo] = useState('');
-  const [validationErrors, setValidationErrors] = useState<{
-    mobile?: string; legalIdentifier?: string; discomConsumerNo?: string;
-  }>({});
+  // const [validationErrors, setValidationErrors] = useState<{
+  //   mobile?: string; legalIdentifier?: string; discomConsumerNo?: string;
+  // }>({});
 
   const [selectedSupplierForModal, setSelectedSupplierForModal] = useState<any>(null);
   const [showSupplierModal, setShowSupplierModal] = useState(false);
@@ -128,8 +128,8 @@ export const ConsumerDashboard: React.FC<ConsumerDashboardProps> = ({ activeTab,
   const [docView, setDocView] = useState<'landing' | 'geoa-form' | 'doc-upload'>('landing');
   const [geoaStep, setGeoaStep] = useState(1);
   const [geoaDraftSaved, setGeoaDraftSaved] = useState(false);
-  const [geoaApplications, setGeoaApplications] = useState<GeoaApplication[]>([]);
-  const [geoaSubmitSuccess, setGeoaSubmitSuccess] = useState(false);
+  // const [geoaApplications, setGeoaApplications] = useState<GeoaApplication[]>([]);
+  // const [geoaSubmitSuccess, setGeoaSubmitSuccess] = useState(false);
 
   // GEOA form fields
   const [geoaApplicantName, setGeoaApplicantName] = useState('');

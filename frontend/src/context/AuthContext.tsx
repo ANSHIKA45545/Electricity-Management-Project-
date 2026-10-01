@@ -9,6 +9,8 @@ export interface User {
   k_number?: string;
   connection_type?: string;
   phoneNumber?: string;
+   state?: string;    
+  status?: string;
 }
 
 interface AuthContextType {
