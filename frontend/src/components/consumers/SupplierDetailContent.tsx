@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Building, Phone, Mail, MapPin, Zap, X } from 'lucide-react';
+import { Building, Phone, Mail, MapPin, Zap} from 'lucide-react';
 
 interface SupplierDetailContentProps {
   supplierId: string;

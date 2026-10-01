@@ -4,7 +4,7 @@ import {
   Users, FileText, AlertTriangle, ShieldCheck,
   Cpu, Key, BarChart2, Settings, DollarSign,
   CheckCircle, XCircle, Eye, ChevronDown, ChevronUp,
-  MapPin, Zap, Building2, Clock, AlertCircle, X
+  Zap, Building2, Clock, AlertCircle
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -12,7 +12,9 @@ interface AdminDashboardProps {
   setTab: (tab: string) => void;
 }
 
-export const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, setTab }) => {
+// FIX: only destructure `activeTab` — `setTab` is declared in the interface for
+// API compatibility but not used anywhere in this component.
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab }) => {
   const [consumers, setConsumers] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
@@ -105,12 +107,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, setTa
     loadAdminData();
   }, [token]);
 
-  const userStatusBadgeClass = (status: string) => {
-    if (status === 'VERIFIED') return 'badge-green';
-    if (status === 'REJECTED') return 'badge-red';
-    return 'badge-amber';
-  };
-
   const appStatusBadge = (status: string) => {
     const s = (status || '').toUpperCase();
     if (s === 'APPROVED' || s === 'SUPPLIER_APPROVED') return 'badge-green';
@@ -196,37 +192,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, setTa
   };
 
   const handleVerifyUser = async (id: string, role: 'SUPPLIER' | 'CONSUMER', action: 'approve' | 'reject') => {
-  // Only allow supplier verification (consumers are auto-approved)
-  if (role !== 'SUPPLIER') {
-    console.log('Consumer verification not required');
-    return;
-  }
-  
-  if (!token) return;
-  try {
-    const endpoint = action === 'approve' ? 'approve' : 'reject';
-    const response = await fetch(`${API_BASE}/api/users/${id}/${endpoint}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ reason: action === 'reject' ? 'Rejected by admin' : undefined })
-    });
-    
-    if (!response.ok) throw new Error(await response.text());
-    
-    const newStatus = action === 'approve' ? 'VERIFIED' : 'REJECTED';
-    
-    // Only update suppliers state
-    if (role === 'SUPPLIER') {
-      setSuppliers(suppliers.map(s => s.id === id ? { ...s, status: newStatus } : s));
+    // Only allow supplier verification (consumers are auto-approved)
+    if (role !== 'SUPPLIER') {
+      console.log('Consumer verification not required');
+      return;
     }
-    
-    console.log(`Supplier ${action}ed successfully`);
-    
-  } catch (error: any) {
-    console.error(`Error ${action}ing supplier:`, error);
-    setDashboardError(error?.message || `Unable to ${action} supplier`);
-  }
-};
+
+    if (!token) return;
+    try {
+      const endpoint = action === 'approve' ? 'approve' : 'reject';
+      const response = await fetch(`${API_BASE}/api/users/${id}/${endpoint}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ reason: action === 'reject' ? 'Rejected by admin' : undefined })
+      });
+
+      if (!response.ok) throw new Error(await response.text());
+
+      const newStatus = action === 'approve' ? 'VERIFIED' : 'REJECTED';
+
+      // Only update suppliers state
+      if (role === 'SUPPLIER') {
+        setSuppliers(suppliers.map(s => s.id === id ? { ...s, status: newStatus } : s));
+      }
+
+      console.log(`Supplier ${action}ed successfully`);
+
+    } catch (error: any) {
+      console.error(`Error ${action}ing supplier:`, error);
+      setDashboardError(error?.message || `Unable to ${action} supplier`);
+    }
+  };
 
   const handleGenerateNoc = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -396,103 +392,102 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, setTa
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // CONSUMERS TAB - Updated
+  // CONSUMERS TAB
   // ══════════════════════════════════════════════════════════════════════════
-  // CONSUMERS TAB - Updated with status and approve/reject buttons
-if (activeTab === 'consumers') {
-  return (
-    <div className="space-y-8 animate-fadeIn">
-      <div className="pb-4 border-b border-[#e0e8e4]">
-        <h2 className="font-sora text-[22px] font-bold text-gray-900">Registered Consumers</h2>
-        <p className="text-gray-500 text-[13px] mt-1">View consumer profiles registered on the Open Access portal</p>
-      </div>
-      <div className="bg-white rounded-[var(--radius-md)] border border-[#e0e8e4] overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[800px]">
-          <thead>
-            <tr>
-              {['K Number', 'Name', 'Email', 'Phone', 'Drawal Point'].map(h => (
-                <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#f0f4f2] text-[13px]">
-            {consumers.map((c, i) => (
-              <tr key={c.id} className={`hover:bg-gray-50 transition-colors ${i % 2 !== 0 ? 'bg-[#f9fcfa]' : ''}`}>
-                <td className="py-3.5 px-5 font-mono text-gray-700">{c.k_number || '—'}</td>
-                <td className="py-3.5 px-5 font-semibold text-gray-900">{c.name}</td>
-                <td className="py-3.5 px-5 text-gray-600">{c.email}</td>
-                <td className="py-3.5 px-5 text-gray-600">{c.phoneNumber || '-'}</td>
-                <td className="py-3.5 px-5 text-gray-600 max-w-[200px] truncate">{c.drawalPoint || '—'}</td>
+  if (activeTab === 'consumers') {
+    return (
+      <div className="space-y-8 animate-fadeIn">
+        <div className="pb-4 border-b border-[#e0e8e4]">
+          <h2 className="font-sora text-[22px] font-bold text-gray-900">Registered Consumers</h2>
+          <p className="text-gray-500 text-[13px] mt-1">View consumer profiles registered on the Open Access portal</p>
+        </div>
+        <div className="bg-white rounded-[var(--radius-md)] border border-[#e0e8e4] overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+              <tr>
+                {['K Number', 'Name', 'Email', 'Phone', 'Drawal Point'].map(h => (
+                  <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#f0f4f2] text-[13px]">
+              {consumers.map((c, i) => (
+                <tr key={c.id} className={`hover:bg-gray-50 transition-colors ${i % 2 !== 0 ? 'bg-[#f9fcfa]' : ''}`}>
+                  <td className="py-3.5 px-5 font-mono text-gray-700">{c.k_number || '—'}</td>
+                  <td className="py-3.5 px-5 font-semibold text-gray-900">{c.name}</td>
+                  <td className="py-3.5 px-5 text-gray-600">{c.email}</td>
+                  <td className="py-3.5 px-5 text-gray-600">{c.phoneNumber || '-'}</td>
+                  <td className="py-3.5 px-5 text-gray-600 max-w-[200px] truncate">{c.drawalPoint || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // SUPPLIERS TAB - Updated with Approve/Reject buttons
+  // SUPPLIERS TAB
   // ══════════════════════════════════════════════════════════════════════════
   if (activeTab === 'suppliers') {
-  return (
-    <div className="space-y-8 animate-fadeIn">
-      <div className="pb-4 border-b border-[#e0e8e4]">
-        <h2 className="font-sora text-[22px] font-bold text-gray-900">Verify Supplier Registrations</h2>
-        <p className="text-gray-500 text-[13px] mt-1">Validate plant generation capacities and origin certificates</p>
-      </div>
-      <div className="bg-white rounded-[var(--radius-md)] border border-[#e0e8e4] overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[900px]">
-          <thead>
-            <tr>
-              {['K Number', 'Company Name', 'Email', 'Phone', 'Injection Point', 'Renewable Type', 'Status'].map(h => (
-                <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#f0f4f2] text-[13px]">
-            {suppliers.map((s, i) => (
-              <tr key={s.id} className={`hover:bg-gray-50 transition-colors ${i % 2 !== 0 ? 'bg-[#f9fcfa]' : ''}`}>
-                <td className="py-3.5 px-5 font-mono text-gray-700">{s.k_number || '—'}</td>
-                <td className="py-3.5 px-5 font-semibold text-gray-900">{s.name}</td>
-                <td className="py-3.5 px-5 text-gray-600">{s.email}</td>
-                <td className="py-3.5 px-5 text-gray-600">{s.phoneNumber || '-'}</td>
-                <td className="py-3.5 px-5 text-gray-600 max-w-[180px] truncate">{s.injectionPoint || '—'}</td>
-                <td className="py-3.5 px-5 font-semibold text-gray-900">{s.renewableType || '—'}</td>
-                <td className="py-3.5 px-5">
-                  {s.status === 'VERIFIED' ? (
-                    <span className="badge badge-green">Approved</span>
-                  ) : s.status === 'REJECTED' ? (
-                    <span className="badge badge-red">Rejected</span>
-                  ) : (
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={() => handleVerifyUser(s.id, 'SUPPLIER', 'approve')} 
-                        className="px-3 py-1 rounded-[6px] bg-green-dark text-white text-[11px] font-semibold hover:bg-green-mid transition-colors"
-                      >
-                        Approve
-                      </button>
-                      <button 
-                        onClick={() => handleVerifyUser(s.id, 'SUPPLIER', 'reject')} 
-                        className="px-3 py-1 rounded-[6px] bg-white border border-red-300 text-red-600 text-[11px] font-semibold hover:bg-red-50 transition-colors"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
-                </td>
+    return (
+      <div className="space-y-8 animate-fadeIn">
+        <div className="pb-4 border-b border-[#e0e8e4]">
+          <h2 className="font-sora text-[22px] font-bold text-gray-900">Verify Supplier Registrations</h2>
+          <p className="text-gray-500 text-[13px] mt-1">Validate plant generation capacities and origin certificates</p>
+        </div>
+        <div className="bg-white rounded-[var(--radius-md)] border border-[#e0e8e4] overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[900px]">
+            <thead>
+              <tr>
+                {['K Number', 'Company Name', 'Email', 'Phone', 'Injection Point', 'Renewable Type', 'Status'].map(h => (
+                  <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#f0f4f2] text-[13px]">
+              {suppliers.map((s, i) => (
+                <tr key={s.id} className={`hover:bg-gray-50 transition-colors ${i % 2 !== 0 ? 'bg-[#f9fcfa]' : ''}`}>
+                  <td className="py-3.5 px-5 font-mono text-gray-700">{s.k_number || '—'}</td>
+                  <td className="py-3.5 px-5 font-semibold text-gray-900">{s.name}</td>
+                  <td className="py-3.5 px-5 text-gray-600">{s.email}</td>
+                  <td className="py-3.5 px-5 text-gray-600">{s.phoneNumber || '-'}</td>
+                  <td className="py-3.5 px-5 text-gray-600 max-w-[180px] truncate">{s.injectionPoint || '—'}</td>
+                  <td className="py-3.5 px-5 font-semibold text-gray-900">{s.renewableType || '—'}</td>
+                  <td className="py-3.5 px-5">
+                    {s.status === 'VERIFIED' ? (
+                      <span className="badge badge-green">Approved</span>
+                    ) : s.status === 'REJECTED' ? (
+                      <span className="badge badge-red">Rejected</span>
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleVerifyUser(s.id, 'SUPPLIER', 'approve')}
+                          className="px-3 py-1 rounded-[6px] bg-green-dark text-white text-[11px] font-semibold hover:bg-green-mid transition-colors"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleVerifyUser(s.id, 'SUPPLIER', 'reject')}
+                          className="px-3 py-1 rounded-[6px] bg-white border border-red-300 text-red-600 text-[11px] font-semibold hover:bg-red-50 transition-colors"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // APPLICATIONS TAB — FULL GEOA DETAIL VIEW (unchanged)
+  // APPLICATIONS TAB
   // ══════════════════════════════════════════════════════════════════════════
   if (activeTab === 'applications') {
     const pending = applications.filter(a => !['APPROVED','SUPPLIER_APPROVED','REJECTED'].includes(a.approvalStatus || ''));
@@ -545,7 +540,6 @@ if (activeTab === 'consumers') {
 
               return (
                 <div key={app.id} className={`bg-white rounded-[var(--radius-md)] border transition-all ${isExpanded ? 'border-green-mid shadow-md' : 'border-[#e0e8e4] shadow-sm'}`}>
-                  {/* Application row header */}
                   <div className="p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="flex items-start gap-4 min-w-0">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
@@ -601,7 +595,6 @@ if (activeTab === 'consumers') {
                     </div>
                   </div>
 
-                  {/* Reject reason input */}
                   {rejectingAppId === app.id && (
                     <div className="px-5 pb-5 border-t border-[#f0f4f2] pt-4">
                       <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
@@ -621,7 +614,6 @@ if (activeTab === 'consumers') {
                     </div>
                   )}
 
-                  {/* Expanded detail view */}
                   {isExpanded && (
                     <div className="border-t border-[#f0f4f2] p-5 space-y-6 bg-gray-50/50">
                       <div>
@@ -689,7 +681,7 @@ if (activeTab === 'consumers') {
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // NOC MANAGEMENT TAB (unchanged)
+  // NOC MANAGEMENT TAB
   // ══════════════════════════════════════════════════════════════════════════
   if (activeTab === 'noc-management') {
     return (
@@ -747,7 +739,7 @@ if (activeTab === 'consumers') {
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // SCHEDULING TAB (unchanged)
+  // SCHEDULING TAB
   // ══════════════════════════════════════════════════════════════════════════
   if (activeTab === 'scheduling') {
     return (
@@ -760,9 +752,9 @@ if (activeTab === 'consumers') {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr>
-              {['Schedule ID','Supplier','Consumer','Approved MW','Time Block','Grid Dispatch Status'].map(h => (
-                <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
-              ))}
+                {['Schedule ID','Supplier','Consumer','Approved MW','Time Block','Grid Dispatch Status'].map(h => (
+                  <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-[#f0f4f2] text-[13px]">
@@ -784,7 +776,7 @@ if (activeTab === 'consumers') {
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // DOCUMENTS TAB (unchanged)
+  // DOCUMENTS TAB
   // ══════════════════════════════════════════════════════════════════════════
   if (activeTab === 'documents') {
     return (
@@ -797,9 +789,9 @@ if (activeTab === 'consumers') {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr>
-              {['Document Title','Category','Filed By','Date','Status','Action'].map(h => (
-                <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
-              ))}
+                {['Document Title','Category','Filed By','Date','Status','Action'].map(h => (
+                  <th key={h} className="bg-green-dark text-white text-[12px] font-semibold px-5 py-3 tracking-[0.03em] uppercase">{h}</th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-[#f0f4f2] text-[13px]">
@@ -830,7 +822,7 @@ if (activeTab === 'consumers') {
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // PAYMENTS TAB (unchanged)
+  // PAYMENTS TAB
   // ══════════════════════════════════════════════════════════════════════════
   if (activeTab === 'payments') {
     return (
@@ -851,7 +843,7 @@ if (activeTab === 'consumers') {
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // SETTINGS TAB (unchanged)
+  // SETTINGS TAB
   // ══════════════════════════════════════════════════════════════════════════
   if (activeTab === 'settings') {
     return (
