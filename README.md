@@ -280,8 +280,6 @@ A ready-made SQL script, `backend/prisma/dummy_data.sql`, lets you try the porta
 | Supplier | K-number `320223020298`,password : `qwertyuiop`
 
 
-> **Before going live,** run the cleanup section at the bottom of `dummy_data.sql` (or change these passwords). Demo credentials must not remain in a production database.
-
 ---
 
 ## API Reference
