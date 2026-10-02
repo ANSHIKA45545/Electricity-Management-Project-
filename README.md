@@ -9,7 +9,7 @@ A full-stack web portal for managing **Green Open Access (GOAR / NOAR)** electri
 | Database   | PostgreSQL via Prisma ORM                | Neon      |
 
 **Live backend:** `https://electricity-management-project.onrender.com`
-**Live frontend:** `[https://<your-site>.netlify.app](https://greenenergyoa.netlify.app/)` 
+**Live frontend:** `https://greenenergyoa.netlify.app/` 
 
 ---
 
